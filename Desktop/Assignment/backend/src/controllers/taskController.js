@@ -7,6 +7,9 @@ const getTasks = async (req, res) => {
     const { projectId } = req.params;
     const { status } = req.query;
 
+    console.log('🔥 GETTING TASKS FOR PROJECT:', projectId);
+    console.log('🔥 FOR USER:', req.user.email);
+
     // Verify project belongs to user
     const project = await Project.findOne({
       _id: projectId,
@@ -23,8 +26,12 @@ const getTasks = async (req, res) => {
     }
 
     const tasks = await Task.find(query).sort({ createdAt: -1 });
+    console.log('📊 FOUND TASKS FROM DATABASE:', tasks.length);
+    console.log('📊 TASKS DATA:', tasks);
+    
     res.json(tasks);
   } catch (error) {
+    console.error('❌ Get tasks error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -37,7 +44,10 @@ const createTask = async (req, res) => {
     }
 
     const { projectId } = req.params;
-    const { title, description, status, dueDate } = req.body;
+    const { title, description, status, priority, dueDate } = req.body;
+
+    console.log('🔥 CREATING TASK:', { title, description, status, priority, dueDate });
+    console.log('🔥 FOR PROJECT:', projectId);
 
     // Verify project belongs to user
     const project = await Project.findOne({
@@ -52,14 +62,18 @@ const createTask = async (req, res) => {
     const task = new Task({
       title,
       description,
-      status,
+      status: status || 'todo',
+      priority: priority || 'medium',
       dueDate,
       projectId
     });
 
-    await task.save();
-    res.status(201).json(task);
+    const savedTask = await task.save();
+    console.log('✅ TASK SAVED:', savedTask);
+    
+    res.status(201).json(savedTask);
   } catch (error) {
+    console.error('❌ Create task error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -72,7 +86,10 @@ const updateTask = async (req, res) => {
     }
 
     const { taskId } = req.params;
-    const { title, description, status, dueDate } = req.body;
+    const { title, description, status, priority, dueDate } = req.body;
+
+    console.log('🔥 UPDATING TASK:', taskId);
+    console.log('🔥 WITH DATA:', { title, description, status, priority, dueDate });
 
     // Find task and verify project belongs to user
     const task = await Task.findById(taskId);
@@ -91,12 +108,14 @@ const updateTask = async (req, res) => {
 
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
-      { title, description, status, dueDate },
+      { title, description, status, priority, dueDate },
       { new: true }
     );
 
+    console.log('✅ TASK UPDATED:', updatedTask);
     res.json(updatedTask);
   } catch (error) {
+    console.error('❌ Update task error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -104,6 +123,8 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const { taskId } = req.params;
+
+    console.log('🔥 DELETING TASK:', taskId);
 
     // Find task and verify project belongs to user
     const task = await Task.findById(taskId);
@@ -121,8 +142,11 @@ const deleteTask = async (req, res) => {
     }
 
     await Task.findByIdAndDelete(taskId);
+    console.log('✅ TASK DELETED SUCCESSFULLY');
+    
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
+    console.error('❌ Delete task error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

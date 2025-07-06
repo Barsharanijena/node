@@ -4,10 +4,19 @@ const Task = require('../models/Task');
 
 const getProjects = async (req, res) => {
   try {
+    console.log('🔥 GETTING PROJECTS FOR USER:', req.user.email);
+    
+    // Get REAL projects from database
     const projects = await Project.find({ userId: req.user._id })
       .sort({ createdAt: -1 });
+    
+    console.log('📊 FOUND PROJECTS FROM DATABASE:', projects.length);
+    console.log('📊 PROJECTS DATA:', projects);
+    
+    // Return projects directly (not wrapped in message object)
     res.json(projects);
   } catch (error) {
+    console.error('❌ Get projects error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -20,17 +29,23 @@ const createProject = async (req, res) => {
     }
 
     const { title, description, status } = req.body;
+    
+    console.log('🔥 CREATING PROJECT:', { title, description, status });
+    console.log('🔥 FOR USER:', req.user.email);
 
     const project = new Project({
       title,
       description,
-      status,
+      status: status || 'active',
       userId: req.user._id
     });
 
-    await project.save();
-    res.status(201).json(project);
+    const savedProject = await project.save();
+    console.log('✅ PROJECT SAVED:', savedProject);
+    
+    res.status(201).json(savedProject);
   } catch (error) {
+    console.error('❌ Create project error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -56,6 +71,7 @@ const updateProject = async (req, res) => {
 
     res.json(project);
   } catch (error) {
+    console.error('❌ Update project error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -76,6 +92,7 @@ const deleteProject = async (req, res) => {
 
     res.json({ message: 'Project deleted successfully' });
   } catch (error) {
+    console.error('❌ Delete project error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -93,6 +110,7 @@ const getProject = async (req, res) => {
 
     res.json(project);
   } catch (error) {
+    console.error('❌ Get project error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

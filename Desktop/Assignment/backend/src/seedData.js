@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const User = require('../models/User');
-const Project = require('../models/Project');
-const Task = require('../models/Task');
+const User = require('./models/User');        // Fixed: ./ instead of ../
+const Project = require('./models/Project');  // Fixed: ./ instead of ../
+const Task = require('./models/Task');        // Fixed: ./ instead of ../
 
 dotenv.config();
 
@@ -52,6 +52,7 @@ const seedData = async () => {
         title: 'Setup project structure',
         description: 'Initialize React project and setup folder structure',
         status: 'done',
+        priority: 'high',
         dueDate: new Date('2024-01-15'),
         projectId: createdProjects[0]._id
       },
@@ -59,6 +60,7 @@ const seedData = async () => {
         title: 'Implement user authentication',
         description: 'Add login/register functionality with JWT',
         status: 'in-progress',
+        priority: 'high',
         dueDate: new Date('2024-01-30'),
         projectId: createdProjects[0]._id
       },
@@ -66,6 +68,7 @@ const seedData = async () => {
         title: 'Build product catalog',
         description: 'Create product listing and detail pages',
         status: 'todo',
+        priority: 'medium',
         dueDate: new Date('2024-02-15'),
         projectId: createdProjects[0]._id
       },
@@ -74,6 +77,7 @@ const seedData = async () => {
         title: 'Project planning',
         description: 'Define requirements and create wireframes',
         status: 'done',
+        priority: 'high',
         dueDate: new Date('2024-01-10'),
         projectId: createdProjects[1]._id
       },
@@ -81,6 +85,7 @@ const seedData = async () => {
         title: 'Setup React Native environment',
         description: 'Install and configure React Native development environment',
         status: 'in-progress',
+        priority: 'medium',
         dueDate: new Date('2024-01-25'),
         projectId: createdProjects[1]._id
       },
@@ -88,6 +93,7 @@ const seedData = async () => {
         title: 'Implement core features',
         description: 'Build main app functionality and navigation',
         status: 'todo',
+        priority: 'low',
         dueDate: new Date('2024-02-28'),
         projectId: createdProjects[1]._id
       }
